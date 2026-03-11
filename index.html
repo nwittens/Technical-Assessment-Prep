@@ -1,1 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Backend Engineering — Technical Assessment</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Fraunces:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #f8f6f1; --surface: #ffffff; --surface2: #f2efe8;
+    --border: #e0dbd0; --border2: #ccc8bc;
+    --ink: #1a1814; --ink2: #4a463e; --ink3: #7a7670;
+    --accent: #1a4a2e; --accent-light: rgba(26,74,46,0.08); --accent-mid: rgba(26,74,46,0.15);
+    --warn: #8b4000; --warn-light: rgba(139,64,0,0.08);
+    --danger: #8b0000; --danger-light: rgba(139,0,0,0.07);
+    --gold: #b8860b; --gold-light: rgba(184,134,11,0.1);
+    --mono:'IBM Plex Mono',monospace; --serif:'Fraunces',serif; --sans:'DM Sans',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);min-height:100vh}
+
+  .app-header{
+    background:var(--ink);padding:14px 32px;
+    display:flex;align-items:center;justify-content:space-between;
+    position:sticky;top:0;z-index:100;border-bottom:1px solid #2a2824;
+  }
+  .app-brand{font-family:var(--serif);font-size:15px;font-weight:300;color:#f8f6f1}
+  .app-brand em{font-style:italic;color:#a8c5a0}
+  .header-tag{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#555;border:1px solid #2e2c28;padding:4px 10px;border-radius:4px}
+
+  .challenge-panel{max-width:860px;margin:0 auto;padding:36px 40px}
+
+  .challenge-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px;display:flex;align-items:center;gap:10px}
+  .challenge-eyebrow::after{content:'';flex:1;height:1px;background:var(--border)}
+  .challenge-title{font-family:var(--serif);font-size:30px;font-weight:300;line-height:1.25;margin-bottom:6px;color:var(--ink)}
+  .challenge-title em{font-style:italic;color:var(--accent)}
+  .challenge-subtitle{font-size:13px;color:var(--ink3);margin-bottom:28px;line-height:1.5}
+
+  .section{margin-bottom:28px}
+  .section-label{font-family:var(--mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:14px}
+
+  .context-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px;font-size:13px;color:var(--ink2);line-height:1.7}
+  .context-box p+p{margin-top:10px}
+  .context-box strong{color:var(--ink);font-weight:600}
+
+  .schema-block{background:var(--ink);border-radius:10px;overflow:hidden}
+  .schema-tab-row{display:flex;border-bottom:1px solid #2a2824;background:#141210}
+  .schema-tab{font-family:var(--mono);font-size:11px;padding:8px 16px;color:#555;cursor:pointer;border-right:1px solid #2a2824;transition:all 0.15s;letter-spacing:0.04em}
+  .schema-tab:hover{color:#a8c5a0}
+  .schema-tab.active{color:#a8c5a0;background:#1e1c18;border-bottom:1px solid #1e1c18;margin-bottom:-1px}
+  .schema-content{display:none;padding:20px 22px}
+  .schema-content.active{display:block}
+  .schema-content pre{font-family:var(--mono);font-size:12px;line-height:1.7;color:#c8c4bc;white-space:pre;overflow-x:auto}
+  .sql-kw{color:#a8c5a0}.sql-type{color:#d4a85a}.sql-cmt{color:#404040;font-style:italic}
+
+  .req-list{display:flex;flex-direction:column;gap:10px}
+  .req-item{display:flex;gap:14px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;align-items:flex-start}
+  .req-num{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent);background:var(--accent-light);border:1px solid var(--accent-mid);border-radius:4px;padding:2px 7px;flex-shrink:0;margin-top:1px}
+  .req-body{flex:1}
+  .req-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:3px}
+  .req-desc{font-size:12px;color:var(--ink3);line-height:1.5}
+  .req-tag{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:0.07em;text-transform:uppercase;padding:2px 6px;border-radius:3px;margin-left:6px;vertical-align:middle}
+  .req-tag.db{background:var(--gold-light);color:var(--gold);border:1px solid rgba(184,134,11,0.2)}
+  .req-tag.algo{background:var(--accent-light);color:var(--accent);border:1px solid var(--accent-mid)}
+  .req-tag.perf{background:var(--warn-light);color:var(--warn);border:1px solid rgba(139,64,0,0.15)}
+
+  .constraint-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .constraint-item{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+  .constraint-label{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px}
+  .constraint-val{font-size:13px;font-weight:600;color:var(--ink)}
+
+  .code-block{background:var(--ink);border-radius:10px;overflow:hidden}
+  .code-header{background:#141210;border-bottom:1px solid #2a2824;padding:10px 18px;display:flex;align-items:center;justify-content:space-between}
+  .code-filename{font-family:var(--mono);font-size:11px;color:#a8c5a0;letter-spacing:0.04em}
+  .code-lang{font-family:var(--mono);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#444}
+  .code-body{padding:18px 20px;font-family:var(--mono);font-size:12.5px;line-height:1.75;color:#c8c4bc;overflow-x:auto;white-space:pre}
+  .j-kw{color:#c792ea}.j-cls{color:#ffe082}.j-fn{color:#80cbc4}.j-str{color:#a5d6a7}
+  .j-num{color:#ffab91}.j-ann{color:#ef9a9a}.j-cmt{color:#37474f;font-style:italic}
+
+  /* Submission */
+  .submission-section{margin-top:36px;padding-top:32px;border-top:2px solid var(--border)}
+  .submission-header{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+  .submission-icon{width:40px;height:40px;background:var(--accent-light);border:1px solid var(--accent-mid);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+  .submission-title{font-family:var(--serif);font-size:22px;font-weight:300;color:var(--ink);margin-bottom:4px}
+  .submission-title em{font-style:italic;color:var(--accent)}
+  .submission-desc{font-size:12.5px;color:var(--ink3);line-height:1.6}
+  .submission-field{margin-bottom:14px}
+  .field-label{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+  .field-required{color:var(--danger);font-size:12px}
+  .field-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:var(--sans);font-size:13px;color:var(--ink);outline:none;transition:border-color 0.15s}
+  .field-input:focus{border-color:var(--accent)}
+  .field-input::placeholder{color:var(--ink3)}
+  .field-textarea{width:100%;background:var(--ink);border:1px solid #2a2824;border-radius:8px;padding:16px 18px;font-family:var(--mono);font-size:12.5px;color:#c8c4bc;outline:none;resize:vertical;min-height:280px;line-height:1.7;transition:border-color 0.15s}
+  .field-textarea:focus{border-color:#a8c5a0}
+  .field-textarea::placeholder{color:#37474f}
+  .field-hint{font-size:11px;color:var(--ink3);margin-top:5px;line-height:1.4}
+  .submit-row{display:flex;align-items:center;gap:14px;margin-top:20px}
+  .submit-btn{font-family:var(--sans);font-size:14px;font-weight:700;padding:13px 28px;background:var(--accent);color:white;border:none;border-radius:8px;cursor:pointer;transition:all 0.15s;letter-spacing:0.02em}
+  .submit-btn:hover{background:#1d5c38;box-shadow:0 4px 16px rgba(26,74,46,0.3)}
+  .submit-btn:disabled{background:var(--border2);cursor:not-allowed;box-shadow:none}
+  .submit-note{font-size:11.5px;color:var(--ink3);line-height:1.5}
+  .submit-error{display:none;font-size:12px;color:var(--danger);margin-top:10px;padding:10px 14px;background:var(--danger-light);border:1px solid rgba(139,0,0,0.15);border-radius:6px;line-height:1.5}
+  .submission-success{display:none;text-align:center;padding:40px 20px;background:var(--accent-light);border:1px solid var(--accent-mid);border-radius:12px}
+  .success-icon{font-size:40px;margin-bottom:14px}
+  .success-title{font-family:var(--serif);font-size:24px;font-weight:300;color:var(--accent);margin-bottom:8px}
+  .success-desc{font-size:13px;color:var(--ink2);line-height:1.6}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-brand">Scale-Ability × <em>Betterment</em></div>
+  <div class="header-tag">Backend Engineering Assessment</div>
+</header>
+
+<div class="challenge-panel">
+
+  <div class="challenge-eyebrow">Backend Engineering · Java + Postgres</div>
+  <div class="challenge-title">Portfolio <em>Gain/Loss</em><br>Reporting Engine</div>
+  <div class="challenge-subtitle">Java Spring Boot · PostgreSQL · 90 minutes</div>
+
+  <!-- Background -->
+  <div class="section">
+    <div class="section-label">Background</div>
+    <div class="context-box">
+      <p>Betterment customers hold investment portfolios containing multiple positions across different securities. At the end of each trading day, we need to calculate each customer's <strong>realized and unrealized gain/loss</strong> across their portfolio and persist a daily snapshot to the database.</p>
+      <p>You are building the <strong>DailyGainLossService</strong> — a Spring Boot service that reads position and price data from Postgres, computes gain/loss figures, and writes a summary report back to the database. This is production-level code that must handle real-world edge cases.</p>
+      <p>The data volume is <strong>~50,000 customers</strong> with an average of <strong>12 positions each</strong>. Performance matters.</p>
+    </div>
+  </div>
+
+  <!-- Schema -->
+  <div class="section">
+    <div class="section-label">Database Schema</div>
+    <div class="schema-block">
+      <div class="schema-tab-row">
+        <div class="schema-tab active" onclick="showTab('positions')">positions</div>
+        <div class="schema-tab" onclick="showTab('prices')">daily_prices</div>
+        <div class="schema-tab" onclick="showTab('lots')">tax_lots</div>
+        <div class="schema-tab" onclick="showTab('report')">gain_loss_report</div>
+      </div>
+      <div class="schema-content active" id="tab-positions"><pre><span class="sql-kw">CREATE TABLE</span> positions (
+  id              BIGSERIAL PRIMARY KEY,
+  customer_id     BIGINT NOT NULL,
+  security_id     VARCHAR(12) NOT NULL,   <span class="sql-cmt">-- e.g. 'AAPL', 'VTI'</span>
+  quantity        NUMERIC(18,6) NOT NULL, <span class="sql-cmt">-- fractional shares allowed</span>
+  account_type    VARCHAR(20) NOT NULL,   <span class="sql-cmt">-- 'TAXABLE','IRA','ROTH'</span>
+  created_at      TIMESTAMPTZ DEFAULT NOW(),
+  updated_at      TIMESTAMPTZ DEFAULT NOW(),
+  CONSTRAINT uq_customer_security
+    UNIQUE (customer_id, security_id, account_type)
+);</pre></div>
+      <div class="schema-content" id="tab-prices"><pre><span class="sql-kw">CREATE TABLE</span> daily_prices (
+  id              BIGSERIAL PRIMARY KEY,
+  security_id     VARCHAR(12) NOT NULL,
+  price_date      DATE NOT NULL,
+  closing_price   NUMERIC(18,4) NOT NULL,
+  prev_close      NUMERIC(18,4),           <span class="sql-cmt">-- nullable on first day</span>
+  CONSTRAINT uq_security_date
+    UNIQUE (security_id, price_date)
+);
+<span class="sql-kw">CREATE INDEX</span> idx_prices_date ON daily_prices (price_date, security_id);</pre></div>
+      <div class="schema-content" id="tab-lots"><pre><span class="sql-kw">CREATE TABLE</span> tax_lots (
+  id              BIGSERIAL PRIMARY KEY,
+  customer_id     BIGINT NOT NULL,
+  security_id     VARCHAR(12) NOT NULL,
+  quantity        NUMERIC(18,6) NOT NULL,
+  cost_basis      NUMERIC(18,4) NOT NULL, <span class="sql-cmt">-- price per share at purchase</span>
+  acquired_date   DATE NOT NULL,
+  account_type    VARCHAR(20) NOT NULL,
+  closed          BOOLEAN DEFAULT FALSE   <span class="sql-cmt">-- true if position sold</span>
+);
+<span class="sql-kw">CREATE INDEX</span> idx_lots_customer_security
+  ON tax_lots (customer_id, security_id) WHERE closed = FALSE;</pre></div>
+      <div class="schema-content" id="tab-report"><pre><span class="sql-kw">CREATE TABLE</span> gain_loss_report (
+  id               BIGSERIAL PRIMARY KEY,
+  customer_id      BIGINT NOT NULL,
+  report_date      DATE NOT NULL,
+  security_id      VARCHAR(12) NOT NULL,
+  account_type     VARCHAR(20) NOT NULL,
+  quantity         NUMERIC(18,6) NOT NULL,
+  market_value     NUMERIC(18,4) NOT NULL, <span class="sql-cmt">-- quantity × closing_price</span>
+  cost_basis_total NUMERIC(18,4) NOT NULL, <span class="sql-cmt">-- sum of lot cost_basis × qty</span>
+  unrealized_gl    NUMERIC(18,4) NOT NULL, <span class="sql-cmt">-- market_value - cost_basis_total</span>
+  day_change       NUMERIC(18,4),           <span class="sql-cmt">-- nullable if no prev_close</span>
+  is_long_term     BOOLEAN NOT NULL,        <span class="sql-cmt">-- held > 1 year (tax status)</span>
+  generated_at     TIMESTAMPTZ DEFAULT NOW(),
+  CONSTRAINT uq_report_row
+    UNIQUE (customer_id, report_date, security_id, account_type)
+);</pre></div>
+    </div>
+  </div>
+
+  <!-- Requirements -->
+  <div class="section">
+    <div class="section-label">Requirements</div>
+    <div class="req-list">
+      <div class="req-item">
+        <div class="req-num">R1</div>
+        <div class="req-body">
+          <div class="req-title">Load positions and today's prices <span class="req-tag db">DB</span></div>
+          <div class="req-desc">Fetch all active positions joined with today's closing price from <code style="font-family:var(--mono);font-size:11px">daily_prices</code>. Skip any security with no price for today — log it, do not fail the job.</div>
+        </div>
+      </div>
+      <div class="req-item">
+        <div class="req-num">R2</div>
+        <div class="req-body">
+          <div class="req-title">Calculate unrealized gain/loss <span class="req-tag algo">ALGO</span></div>
+          <div class="req-desc">For each position, sum the weighted cost basis across all open tax lots. Unrealized G/L = (quantity × closing price) − total cost basis. Use <strong>FIFO</strong> lot ordering.</div>
+        </div>
+      </div>
+      <div class="req-item">
+        <div class="req-num">R3</div>
+        <div class="req-body">
+          <div class="req-title">Calculate day change <span class="req-tag algo">ALGO</span></div>
+          <div class="req-desc">Day change = quantity × (closing_price − prev_close). If <code style="font-family:var(--mono);font-size:11px">prev_close</code> is null, set <code style="font-family:var(--mono);font-size:11px">day_change</code> to null — do not default to zero.</div>
+        </div>
+      </div>
+      <div class="req-item">
+        <div class="req-num">R4</div>
+        <div class="req-body">
+          <div class="req-title">Determine long-term tax status <span class="req-tag algo">ALGO</span></div>
+          <div class="req-desc">A position is long-term if the <strong>earliest open lot's acquired_date</strong> is more than 365 days before today. Use the lot table — do not hardcode or approximate.</div>
+        </div>
+      </div>
+      <div class="req-item">
+        <div class="req-num">R5</div>
+        <div class="req-body">
+          <div class="req-title">Batch upsert to gain_loss_report <span class="req-tag db">DB</span> <span class="req-tag perf">PERF</span></div>
+          <div class="req-desc">Write results using a single batch upsert (INSERT ... ON CONFLICT DO UPDATE). Do not loop individual inserts. Re-running for the same date must be idempotent.</div>
+        </div>
+      </div>
+      <div class="req-item">
+        <div class="req-num">R6</div>
+        <div class="req-body">
+          <div class="req-title">Handle scale gracefully <span class="req-tag perf">PERF</span></div>
+          <div class="req-desc">50,000 customers × 12 positions = 600,000 rows. Process in chunks — do not load the entire dataset into memory at once.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Constraints -->
+  <div class="section">
+    <div class="section-label">Constraints & Notes</div>
+    <div class="constraint-grid">
+      <div class="constraint-item"><div class="constraint-label">Language</div><div class="constraint-val">Java 23</div></div>
+      <div class="constraint-item"><div class="constraint-label">Framework</div><div class="constraint-val">Spring Boot 3.x</div></div>
+      <div class="constraint-item"><div class="constraint-label">Database</div><div class="constraint-val">PostgreSQL 16</div></div>
+      <div class="constraint-item"><div class="constraint-label">No floats</div><div class="constraint-val">BigDecimal only</div></div>
+      <div class="constraint-item"><div class="constraint-label">Time limit</div><div class="constraint-val">90 minutes</div></div>
+      <div class="constraint-item"><div class="constraint-label">Target</div><div class="constraint-val">Check-in quality</div></div>
+    </div>
+  </div>
+
+  <!-- Starter Code -->
+  <div class="section">
+    <div class="section-label">Starter Code</div>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-filename">DailyGainLossService.java</span>
+        <span class="code-lang">Java 23</span>
+      </div>
+      <div class="code-body"><span class="j-ann">@Service</span>
+<span class="j-ann">@Slf4j</span>
+<span class="j-kw">public class</span> <span class="j-cls">DailyGainLossService</span> {
+
+    <span class="j-kw">private final</span> <span class="j-cls">PositionRepository</span>   positionRepo;
+    <span class="j-kw">private final</span> <span class="j-cls">DailyPriceRepository</span>  priceRepo;
+    <span class="j-kw">private final</span> <span class="j-cls">TaxLotRepository</span>      lotRepo;
+    <span class="j-kw">private final</span> <span class="j-cls">GainLossReportRepo</span>    reportRepo;
+    <span class="j-kw">private final</span> <span class="j-cls">JdbcTemplate</span>          jdbc;
+
+    <span class="j-kw">private static final int</span> BATCH_SIZE = <span class="j-num">1000</span>;
+
+    <span class="j-cmt">/**
+     * Entry point — called nightly by scheduler.
+     * Must be idempotent (safe to re-run for same date).
+     */</span>
+    <span class="j-kw">public void</span> <span class="j-fn">generateDailyReport</span>(<span class="j-cls">LocalDate</span> reportDate) {
+        <span class="j-cmt">// TODO: implement</span>
+    }
+
+    <span class="j-kw">private</span> <span class="j-cls">BigDecimal</span> <span class="j-fn">calcUnrealizedGL</span>(
+            <span class="j-cls">List</span>&lt;<span class="j-cls">TaxLot</span>&gt; lots,
+            <span class="j-cls">BigDecimal</span> closingPrice,
+            <span class="j-cls">BigDecimal</span> totalQuantity) {
+        <span class="j-cmt">// TODO: implement — FIFO ordering, BigDecimal only</span>
+        <span class="j-kw">return null</span>;
+    }
+
+    <span class="j-kw">private boolean</span> <span class="j-fn">isLongTerm</span>(
+            <span class="j-cls">List</span>&lt;<span class="j-cls">TaxLot</span>&gt; lots,
+            <span class="j-cls">LocalDate</span> reportDate) {
+        <span class="j-cmt">// TODO: earliest lot acquired_date > 365 days ago?</span>
+        <span class="j-kw">return false</span>;
+    }
+
+    <span class="j-kw">private void</span> <span class="j-fn">batchUpsert</span>(<span class="j-cls">List</span>&lt;<span class="j-cls">GainLossRow</span>&gt; rows, <span class="j-cls">LocalDate</span> date) {
+        <span class="j-cmt">// TODO: single INSERT ... ON CONFLICT DO UPDATE
+        // Do not loop individual inserts</span>
+    }
+}</div>
+    </div>
+  </div>
+
+  <!-- Submission -->
+  <div class="submission-section">
+    <div class="submission-header">
+      <div class="submission-icon">📤</div>
+      <div>
+        <div class="submission-title">Submit Your <em>Solution</em></div>
+        <div class="submission-desc">When you're done, paste your completed Java code below and hit submit. Your solution will be sent directly to the hiring team for review.</div>
+      </div>
+    </div>
+
+    <div id="submissionForm">
+      <div class="submission-field">
+        <div class="field-label">Your Name <span class="field-required">*</span></div>
+        <input class="field-input" id="candidateName" type="text" placeholder="First and Last Name">
+      </div>
+      <div class="submission-field">
+        <div class="field-label">Your Email <span class="field-required">*</span></div>
+        <input class="field-input" id="candidateEmail" type="email" placeholder="your@email.com">
+      </div>
+      <div class="submission-field">
+        <div class="field-label">Completed Java Code <span class="field-required">*</span></div>
+        <textarea class="field-textarea" id="candidateCode" placeholder="// Paste your full DailyGainLossService.java solution here..."></textarea>
+        <div class="field-hint">Paste your entire file — including imports, class definition, and all method implementations.</div>
+      </div>
+      <div class="submission-field">
+        <div class="field-label">Notes / Assumptions (optional)</div>
+        <textarea class="field-input" id="candidateNotes" style="resize:vertical;min-height:80px;line-height:1.6;font-family:var(--sans);font-size:13px" placeholder="Any assumptions you made, edge cases you'd handle with more time, or anything you'd like the reviewer to know..."></textarea>
+      </div>
+      <div class="submit-row">
+        <button class="submit-btn" id="submitBtn" onclick="submitSolution()">Submit Solution →</button>
+        <div class="submit-note">Sent securely to the hiring team.<br>You'll hear back within 2 business days.</div>
+      </div>
+      <div class="submit-error" id="submitError"></div>
+    </div>
+
+    <div class="submission-success" id="submissionSuccess">
+      <div class="success-icon">✅</div>
+      <div class="success-title">Solution Submitted</div>
+      <div class="success-desc">Your code has been sent to the hiring team at Scale-Ability.<br>You'll hear back within 2 business days.</div>
+    </div>
+  </div>
+
+</div><!-- /challenge-panel -->
+
+<script>
+function showTab(name) {
+  const tabs = ['positions','prices','lots','report'];
+  document.querySelectorAll('.schema-tab').forEach((t,i) => t.classList.toggle('active', tabs[i] === name));
+  document.querySelectorAll('.schema-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+async function submitSolution() {
+  const name  = document.getElementById('candidateName').value.trim();
+  const email = document.getElementById('candidateEmail').value.trim();
+  const code  = document.getElementById('candidateCode').value.trim();
+  const notes = document.getElementById('candidateNotes').value.trim();
+  const errorEl = document.getElementById('submitError');
+  errorEl.style.display = 'none';
+
+  if (!name)  { showError('Please enter your name.'); return; }
+  if (!email || !email.includes('@')) { showError('Please enter a valid email address.'); return; }
+  if (!code || code.length < 50) { showError('Please paste your completed Java solution before submitting.'); return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  try {
+    const res = await fetch('https://formspree.io/f/xvzwaqwe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _subject: `Betterment Technical Assessment — ${name}`,
+        candidate_name: name,
+        candidate_email: email,
+        submitted_at: new Date().toLocaleString(),
+        notes: notes || '(none)',
+        code: code,
+      })
+    });
+
+    if (res.ok) {
+      document.getElementById('submissionForm').style.display = 'none';
+      document.getElementById('submissionSuccess').style.display = 'block';
+    } else {
+      showError('Submission failed. Please try again or email your solution to neil@scale-ability.ai');
+      btn.disabled = false;
+      btn.textContent = 'Submit Solution →';
+    }
+  } catch(e) {
+    showError('Network error. Please try again or email your solution directly to neil@scale-ability.ai');
+    btn.disabled = false;
+    btn.textContent = 'Submit Solution →';
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('submitError');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+</script>
+</body>
+</html>
 
