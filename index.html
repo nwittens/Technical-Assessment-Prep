@@ -783,6 +783,182 @@
   .tbtn.start { background: var(--accent); color: white; border-color: var(--accent); }
   .tbtn.start:hover { background: #1d5c38; }
   .tbtn:hover { border-color: var(--border2); color: var(--ink); }
+
+  /* ══════════════════════════
+     SUBMISSION SECTION
+  ══════════════════════════ */
+  .submission-section {
+    margin-top: 36px;
+    padding-top: 32px;
+    border-top: 2px solid var(--border);
+  }
+
+  .submission-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .submission-icon {
+    width: 40px; height: 40px;
+    background: var(--accent-light);
+    border: 1px solid var(--accent-mid);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .submission-title {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .submission-title em { font-style: italic; color: var(--accent); }
+
+  .submission-desc {
+    font-size: 12.5px;
+    color: var(--ink3);
+    line-height: 1.6;
+  }
+
+  .submission-field {
+    margin-bottom: 14px;
+  }
+
+  .field-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .field-required {
+    color: var(--danger);
+    font-size: 12px;
+  }
+
+  .field-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .field-input:focus { border-color: var(--accent); }
+  .field-input::placeholder { color: var(--ink3); }
+
+  .field-textarea {
+    width: 100%;
+    background: var(--ink);
+    border: 1px solid #2a2824;
+    border-radius: 8px;
+    padding: 16px 18px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: #c8c4bc;
+    outline: none;
+    resize: vertical;
+    min-height: 280px;
+    line-height: 1.7;
+    transition: border-color 0.15s;
+  }
+
+  .field-textarea:focus { border-color: #a8c5a0; }
+  .field-textarea::placeholder { color: #37474f; }
+
+  .field-hint {
+    font-size: 11px;
+    color: var(--ink3);
+    margin-top: 5px;
+    line-height: 1.4;
+  }
+
+  .submit-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 20px;
+  }
+
+  .submit-btn {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 700;
+    padding: 13px 28px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+  }
+
+  .submit-btn:hover { background: #1d5c38; box-shadow: 0 4px 16px rgba(26,74,46,0.3); }
+  .submit-btn:disabled { background: var(--border2); cursor: not-allowed; box-shadow: none; }
+
+  .submit-note {
+    font-size: 11.5px;
+    color: var(--ink3);
+    line-height: 1.5;
+  }
+
+  /* Success state */
+  .submission-success {
+    display: none;
+    text-align: center;
+    padding: 40px 20px;
+    background: var(--accent-light);
+    border: 1px solid var(--accent-mid);
+    border-radius: 12px;
+  }
+
+  .success-icon { font-size: 40px; margin-bottom: 14px; }
+
+  .success-title {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 300;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .success-desc {
+    font-size: 13px;
+    color: var(--ink2);
+    line-height: 1.6;
+  }
+
+  /* Error state */
+  .submit-error {
+    display: none;
+    font-size: 12px;
+    color: var(--danger);
+    margin-top: 10px;
+    padding: 10px 14px;
+    background: var(--danger-light);
+    border: 1px solid rgba(139,0,0,0.15);
+    border-radius: 6px;
+    line-height: 1.5;
+  }
 </style>
 </head>
 <body>
@@ -1075,6 +1251,57 @@
       </div>
 
     </div><!-- /challenge-panel -->
+
+      <!-- SUBMISSION SECTION — candidate facing -->
+      <div class="submission-section" id="submissionSection">
+        <div class="submission-header">
+          <div class="submission-icon">📤</div>
+          <div>
+            <div class="submission-title">Submit Your <em>Solution</em></div>
+            <div class="submission-desc">When you're done, paste your completed Java code below and hit submit. Your solution will be sent directly to the hiring team for review.</div>
+          </div>
+        </div>
+
+        <div id="submissionForm">
+
+          <div class="submission-field">
+            <div class="field-label">Your Name <span class="field-required">*</span></div>
+            <input class="field-input" id="candidateName" type="text" placeholder="First and Last Name" required>
+          </div>
+
+          <div class="submission-field">
+            <div class="field-label">Your Email <span class="field-required">*</span></div>
+            <input class="field-input" id="candidateEmail" type="email" placeholder="your@email.com" required>
+          </div>
+
+          <div class="submission-field">
+            <div class="field-label">Completed Java Code <span class="field-required">*</span></div>
+            <textarea class="field-textarea" id="candidateCode" placeholder="// Paste your full DailyGainLossService.java solution here..."></textarea>
+            <div class="field-hint">Paste your entire file — including imports, class definition, and all method implementations.</div>
+          </div>
+
+          <div class="submission-field">
+            <div class="field-label">Notes / Assumptions (optional)</div>
+            <textarea class="field-input" id="candidateNotes" style="resize:vertical;min-height:80px;line-height:1.6;font-family:var(--sans);font-size:13px" placeholder="Any assumptions you made, edge cases you'd handle differently with more time, or anything you'd like the reviewer to know..."></textarea>
+          </div>
+
+          <div class="submit-row">
+            <button class="submit-btn" id="submitBtn" onclick="submitSolution()">Submit Solution →</button>
+            <div class="submit-note">Sent securely to the Scale-Ability team.<br>You'll receive a confirmation at your email.</div>
+          </div>
+
+          <div class="submit-error" id="submitError"></div>
+        </div>
+
+        <div class="submission-success" id="submissionSuccess">
+          <div class="success-icon">✅</div>
+          <div class="success-title">Solution Submitted</div>
+          <div class="success-desc">Your code has been sent to the hiring team at Scale-Ability.<br>You'll hear back within 2 business days.</div>
+        </div>
+
+      </div><!-- /submission-section -->
+
+    </div><!-- /left column wrapper -->
 
     <!-- ═══ RIGHT: INTERVIEWER ═══ -->
     <div class="interviewer-panel interviewer-only">
@@ -1423,6 +1650,62 @@ function renderTimer() {
   if (secsLeft < 600) { fill.style.background = '#8b0000'; num.className = 'timer-num danger'; }
   else if (secsLeft < 1800) { fill.style.background = '#8b4000'; num.className = 'timer-num warn'; }
   else { fill.style.background = 'var(--accent)'; num.className = 'timer-num'; }
+}
+
+// ══════════════════════
+// SUBMISSION
+// ══════════════════════
+async function submitSolution() {
+  const name  = document.getElementById('candidateName').value.trim();
+  const email = document.getElementById('candidateEmail').value.trim();
+  const code  = document.getElementById('candidateCode').value.trim();
+  const notes = document.getElementById('candidateNotes').value.trim();
+  const errorEl = document.getElementById('submitError');
+
+  // Validate
+  errorEl.style.display = 'none';
+  if (!name)  { showError('Please enter your name.'); return; }
+  if (!email || !email.includes('@')) { showError('Please enter a valid email address.'); return; }
+  if (!code || code.length < 50) { showError('Please paste your completed Java solution before submitting.'); return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  try {
+    const res = await fetch('https://formspree.io/f/xvzwaqwe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _subject: `Betterment Technical Assessment — ${name}`,
+        candidate_name: name,
+        candidate_email: email,
+        submitted_at: new Date().toLocaleString(),
+        notes: notes || '(none)',
+        code: code,
+      })
+    });
+
+    if (res.ok) {
+      document.getElementById('submissionForm').style.display = 'none';
+      document.getElementById('submissionSuccess').style.display = 'block';
+    } else {
+      const data = await res.json();
+      showError(data?.errors?.[0]?.message || 'Submission failed. Please try again or email your solution directly to neil@scale-ability.ai');
+      btn.disabled = false;
+      btn.textContent = 'Submit Solution →';
+    }
+  } catch(e) {
+    showError('Network error. Please check your connection and try again, or email your solution to neil@scale-ability.ai');
+    btn.disabled = false;
+    btn.textContent = 'Submit Solution →';
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('submitError');
+  el.textContent = msg;
+  el.style.display = 'block';
 }
 </script>
 </body>
