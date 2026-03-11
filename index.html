@@ -1250,9 +1250,7 @@
         </div>
       </div>
 
-    </div><!-- /challenge-panel -->
-
-      <!-- SUBMISSION SECTION — candidate facing -->
+      <!-- SUBMISSION SECTION -->
       <div class="submission-section" id="submissionSection">
         <div class="submission-header">
           <div class="submission-icon">📤</div>
@@ -1263,33 +1261,27 @@
         </div>
 
         <div id="submissionForm">
-
           <div class="submission-field">
             <div class="field-label">Your Name <span class="field-required">*</span></div>
             <input class="field-input" id="candidateName" type="text" placeholder="First and Last Name" required>
           </div>
-
           <div class="submission-field">
             <div class="field-label">Your Email <span class="field-required">*</span></div>
             <input class="field-input" id="candidateEmail" type="email" placeholder="your@email.com" required>
           </div>
-
           <div class="submission-field">
             <div class="field-label">Completed Java Code <span class="field-required">*</span></div>
             <textarea class="field-textarea" id="candidateCode" placeholder="// Paste your full DailyGainLossService.java solution here..."></textarea>
             <div class="field-hint">Paste your entire file — including imports, class definition, and all method implementations.</div>
           </div>
-
           <div class="submission-field">
             <div class="field-label">Notes / Assumptions (optional)</div>
             <textarea class="field-input" id="candidateNotes" style="resize:vertical;min-height:80px;line-height:1.6;font-family:var(--sans);font-size:13px" placeholder="Any assumptions you made, edge cases you'd handle differently with more time, or anything you'd like the reviewer to know..."></textarea>
           </div>
-
           <div class="submit-row">
             <button class="submit-btn" id="submitBtn" onclick="submitSolution()">Submit Solution →</button>
             <div class="submit-note">Sent securely to the Scale-Ability team.<br>You'll receive a confirmation at your email.</div>
           </div>
-
           <div class="submit-error" id="submitError"></div>
         </div>
 
@@ -1298,10 +1290,9 @@
           <div class="success-title">Solution Submitted</div>
           <div class="success-desc">Your code has been sent to the hiring team at Scale-Ability.<br>You'll hear back within 2 business days.</div>
         </div>
-
       </div><!-- /submission-section -->
 
-    </div><!-- /left column wrapper -->
+    </div><!-- /challenge-panel -->
 
     <!-- ═══ RIGHT: INTERVIEWER ═══ -->
     <div class="interviewer-panel interviewer-only">
